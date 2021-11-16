@@ -40,7 +40,7 @@ module.exports = class YoutubeThumbnail extends Builtin {
             await this.page.keyboard.press('Enter');
             // await fs.unlinkSync(name);
           },
-          type: 'Send Picture',
+          type: 'Send Youtube',
         });
       }
     }

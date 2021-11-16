@@ -79,6 +79,11 @@ module.exports = class ActionManager {
       act.sendMessage("Tu n'as pas les droits pour cette commande, déso 🤷🏻‍♂️");
       return null;
     }
+    const fCtrl = await todo.floodController();
+    if (fCtrl.blocked) {
+      act.sendMessage(fCtrl.message);
+      return null;
+    }
     todo.do();
   }
 };

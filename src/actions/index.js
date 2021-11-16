@@ -7,6 +7,7 @@ const ping = require('./ping.js');
 const setRole = require('./setRole.js');
 const timeout = require('./timeout.js');
 const toggleBan = require('./toggleBan.js');
+const floppy = require('./floppy.js');
 
 module.exports = {
   addUser,
@@ -18,4 +19,5 @@ module.exports = {
   setRole,
   timeout,
   toggleBan,
+  floppy,
 };

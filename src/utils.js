@@ -46,13 +46,13 @@ async function websocketDataParser(data) {
           .map((m) => {
             // console.log(m.split('"')[1]);
             if (m.split('"')[1] == 'insertMessage') {
-              console.log(
-                m
-                  .replace(/\(/g, '[')
-                  .replace(/\)/g, ']')
-                  .replace(/undefined/g, 'null')
-                  .replace(/,U/g, ',null'),
-              );
+              // console.log(
+              //   m
+              //     .replace(/\(/g, '[')
+              //     .replace(/\)/g, ']')
+              //     .replace(/undefined/g, 'null')
+              //     .replace(/,U/g, ',null'),
+              // );
               return JSON.parse(
                 m
                   .replace(/\(/g, '[')
@@ -121,7 +121,33 @@ async function applyAttachement(page, link) {
   }
 }
 
-function megaRandom(page) {
+function megaRandomDL() {
+  return new Promise((res, rej) => {
+    const storage = mega(
+      {
+        email: process.env.MEGA_EMAIL,
+        password: process.env.MEGA_PASSWORD,
+        keepalive: true,
+        autoload: true,
+      },
+      async () => {
+        const id = Math.floor(Math.random() * storage.root.children.length);
+        storage.root.children[id].download((err, data) => {
+          fs.writeFile('./tmp/file', data, async () => {
+            const t = await FileType.fromFile('./tmp/file');
+            fs.rename('./tmp/file', `./tmp/megaFile.${t.ext}`, async () => {
+              // const fileInput = await page.$(process.env.MESSENGER_CLASS_FILE);
+              // await fileInput.uploadFile(`./tmp/file.${t.ext}`);
+              return res(`megaFile.${t.ext}`);
+            });
+          });
+        });
+      },
+    );
+  });
+}
+
+function megaNameDL(name) {
   return new Promise((res, rej) => {
     const storage = mega(
       {
@@ -131,17 +157,17 @@ function megaRandom(page) {
         autoload: true,
       },
       async () => {
-        const id = Math.floor(Math.random() * storage.root.children.length);
-        storage.root.children[id].download((err, data) => {
-          fs.writeFile('./tmp/file', data, async () => {
-            const t = await FileType.fromFile('./tmp/file');
-            fs.rename('./tmp/file', `./tmp/file.${t.ext}`, async () => {
-              const fileInput = await page.$('input.mkhogb32');
-              await fileInput.uploadFile(`./tmp/file.${t.ext}`);
-              return res();
+        const found = storage.root.children.find((f) => f.name == name);
+        if (found) {
+          found.download((err, data) => {
+            fs.writeFile('./tmp/file', data, async () => {
+              const t = await FileType.fromFile('./tmp/file');
+              fs.rename('./tmp/file', `./tmp/${name}`, () => {
+                return res();
+              });
             });
           });
-        });
+        }
       },
     );
   });
@@ -238,7 +264,8 @@ module.exports.applyTags = applyTags;
 module.exports.typeText = typeText;
 module.exports.applyAttachement = applyAttachement;
 module.exports.uploadRandomPicture = uploadRandomPicture;
-module.exports.megaRandom = megaRandom;
+module.exports.megaRandomDL = megaRandomDL;
+module.exports.megaNameDL = megaNameDL;
 module.exports.uploadPicture = uploadPicture;
 module.exports.fetchApi = fetchApi;
 module.exports.handleHelp = handleHelp;

@@ -31,7 +31,6 @@ module.exports = class NavigationManager {
     this.builtinManager = new BuiltinManager(this);
     this.dbManager = new DbManager();
     await this.dbManager.init();
-    await this.dbManager.getUsersLastMessages();
     this.waitingQueue();
     // TODO Finish crontab ilmplementation
     // this.cronTab = new CronTab(this);
