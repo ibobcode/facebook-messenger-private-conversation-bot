@@ -1,0 +1,5 @@
+EMAIL=email_of_the_bot
+PASSWORD=password_of_the_bot
+CONVERSATION_ID=2948244144952918
+HEADLESS=false
+ACTIONS_URL=https://raw.githubusercontent.com/my_username/my_repo/master/actions.json
