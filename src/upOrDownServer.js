@@ -6,7 +6,7 @@ module.exports = () => {
   app.use(express.json());
 
   app.get('/', (x, res) => {
-    res.send('Conv bot is alive!');
+    res.send('NEO is alive!');
   });
   this.server = app
     .listen(process.env.PORT, () => {
