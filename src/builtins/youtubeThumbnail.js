@@ -1,7 +1,7 @@
 //https://img.youtube.com/vi/KjYBh7rq0-Y/0.jpg
 const utils = require('../utils.js');
 const Builtin = require('./builtin');
-const fetch = require('node-fetch');
+const request = require('request-promise');
 
 module.exports = class YoutubeThumbnail extends Builtin {
   constructor(navigationContext, data) {
@@ -18,11 +18,10 @@ module.exports = class YoutubeThumbnail extends Builtin {
   }
 
   async getInfos(id) {
-    const res = await fetch(
-      `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${id}`,
-    );
-    const data = await res.json();
-    return data;
+    const data = await request({
+      uri: `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${id}`,
+    });
+    return JSON.parse(data);
   }
 
   async do() {
