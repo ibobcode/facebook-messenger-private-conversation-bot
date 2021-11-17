@@ -1,9 +1,11 @@
 const chalk = require('chalk');
 const actions = require('./actions');
 
+//TODO IMPLEMENT CRON
+
 module.exports = class CronTab {
   constructor(nm) {
-    // console.log(chalk.green.inverse('🤖 CONV BOT CREATED'));
+    // console.info(chalk.green.inverse('🤖 CONV BOT CREATED'));
     this.nm = nm;
     this.tasks = [];
   }
@@ -23,7 +25,6 @@ module.exports = class CronTab {
         )[0],
         users: that.nm.dbManager.users,
       };
-      console.log('RUN PONG', action);
       await that.nm.instructionsReader(action);
     }, 10000);
   }

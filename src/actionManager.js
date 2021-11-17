@@ -6,7 +6,7 @@ const Action = require('./actions/action');
 
 module.exports = class ActionManager {
   constructor(navigationContext) {
-    // console.log(chalk.green.inverse('🤖 CONV BOT CREATED'));
+    // console.info(chalk.green.inverse('🤖 CONV BOT CREATED'));
     this.navigationContext = navigationContext;
   }
 
@@ -40,7 +40,6 @@ module.exports = class ActionManager {
       messageId: data.id,
     };
     instruction.tokens = this.tokenize(instruction.string);
-    // console.log(instruction);
     if (instruction.tokens === null) {
       return null;
     }

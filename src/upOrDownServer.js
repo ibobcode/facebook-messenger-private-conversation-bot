@@ -10,13 +10,13 @@ module.exports = () => {
   });
   this.server = app
     .listen(process.env.PORT, () => {
-      console.log(
+      console.info(
         chalk.green.inverse(
           `❤️  UP OR DOWN PAGE IS NOW RUNNING ON PORT ${process.env.PORT} - `,
         ),
       );
     })
-    .on('SERVER ERROR', console.log);
+    .on('SERVER ERROR', console.error);
   app.get('/death', (req, res) => {
     res.send('Killing the bot');
     this.server.close();

@@ -17,7 +17,6 @@ module.exports = class SetRole extends Action {
       : this.cmd.tokens[1].string;
     const target = this.dbManager.users.filter((u) => u.user == senderId)[0];
     if (target) {
-      console.log(senderId, this.cmd.tokens[2].string);
       await this.dbManager.updateUser(
         // userId
         senderId,

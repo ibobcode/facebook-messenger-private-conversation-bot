@@ -5,7 +5,7 @@ const Builtin = require('./builtins/builtin');
 
 module.exports = class BuiltinManager {
   constructor(navigationContext) {
-    // console.log(chalk.green.inverse('🤖 CONV BOT CREATED'));
+    // console.info(chalk.green.inverse('🤖 CONV BOT CREATED'));
     this.navigationContext = navigationContext;
   }
 

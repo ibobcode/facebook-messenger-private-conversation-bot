@@ -28,8 +28,8 @@ async function start(hasCrashed = false) {
 }
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log(chalk.red.inverse('💀 CONV BOT CRASHED'));
-  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+  console.error(chalk.red.inverse('💀 CONV BOT CRASHED'));
+  console.error('Unhandled Rejection at: Promise', p, 'reason:', reason);
   nm = null;
   // setTimeout(() => start(true), 5000);
 });
