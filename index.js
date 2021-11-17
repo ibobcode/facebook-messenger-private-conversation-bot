@@ -4,11 +4,17 @@ const utils = require('./src/utils');
 const chalk = require('chalk');
 const NavigationManager = require('./src/navigationManager');
 const UpOrDownServer = require('./src/upOrDownServer');
+var fs = require('fs');
 
 let nm = null;
 
 // Entrypoint to start the bot (or restart it if it has crashed)
 async function start(hasCrashed = false) {
+  const dir = './tmp';
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
   nm = new NavigationManager(hasCrashed);
   if (process.env.ENV === 'production') {
     UpOrDownServer();
