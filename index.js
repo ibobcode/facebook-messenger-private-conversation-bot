@@ -18,7 +18,7 @@ async function start(hasCrashed = false) {
     fs.mkdirSync(dir);
   }
   nm = new NavigationManager(hasCrashed);
-  if (process.env.ENV === 'production') {
+  if (process.env.ENV === 'production' && !crashed) {
     UpOrDownServer();
   }
 
