@@ -28,6 +28,7 @@ module.exports = class YoutubeThumbnail extends Builtin {
     if (this.data.msg) {
       const res = this.urlIdParser(this.data.msg);
       if (res) {
+        console.info(chalk.green.inverse('💬 Builtin Youtube'));
         const infos = await this.getInfos(res);
         this.wq.push({
           f: async () => {

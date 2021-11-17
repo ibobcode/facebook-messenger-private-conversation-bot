@@ -43,6 +43,7 @@ module.exports = class SubRedditFetcher extends Builtin {
       if (sub) {
         const post = await this.fetchReddit(sub);
         if (post) {
+          console.info(chalk.green.inverse('💬 Builtin Reddit'));
           this.wq.push({
             f: async () => {
               await utils.focusInput(this.page);

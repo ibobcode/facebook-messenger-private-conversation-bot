@@ -68,6 +68,7 @@ module.exports = class ActionManager {
       `${cmdId}`,
     );
 
+    console.info(chalk.green.inverse(`💬 Action ${instruction.string}`));
     // Here we create a new instance of the class matching the first token name, passing it it's context for super methods
     const todo = new actions[instruction.tokens[0].string](
       this.navigationContext,
