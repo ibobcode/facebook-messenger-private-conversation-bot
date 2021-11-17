@@ -9,7 +9,7 @@ const WaitQueue = require('wait-queue');
 
 module.exports = class NavigationManager {
   constructor(crashed = false) {
-    console.log(chalk.green.inverse('🤖 CONV BOT CREATED'));
+    console.info(chalk.green.inverse('🤖 CONV BOT CREATED'));
     this.running = true;
     this.crashed = crashed;
     this.actions = [];
@@ -41,7 +41,7 @@ module.exports = class NavigationManager {
     // Here we make sure any instruction sent to the page gets treated in order and not overlaping
     while (true) {
       await this.wq.shift().then(async (data) => {
-        console.log(
+        console.info(
           chalk.blue.bold(' 🔻 Consume an element of the queue : ', data.type),
         );
         await data.f();
@@ -51,20 +51,20 @@ module.exports = class NavigationManager {
 
   // Open a browser, login, navigate to the conversation
   async initConversationPage() {
-    console.log(chalk.cyan.bold(' · Opening browser'));
+    console.info(chalk.cyan.bold(' · Opening browser'));
     this.browser = await puppeteer.launch({
       headless: process.env.HEADLESS === 'true',
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     this.page = await this.browser.newPage();
-    console.log(
+    console.info(
       chalk.cyan.bold(' · Navigating to : '),
       `https://www.messenger.com/t/${process.env.CONVERSATION_ID}`,
     );
     await this.page.goto(
       `https://www.messenger.com/t/${process.env.CONVERSATION_ID}`,
     );
-    console.log(chalk.cyan.bold(' · Loging in'));
+    console.info(chalk.cyan.bold(' · Loging in'));
     await this.page.evaluate((text) => {
       document.getElementById('email').value = text;
     }, process.env.EMAIL);
@@ -74,7 +74,7 @@ module.exports = class NavigationManager {
     await this.page.evaluate(() =>
       document.getElementById('loginbutton').click(),
     );
-    console.log(chalk.cyan.bold(' · Waiting for conversation to load...'));
+    console.info(chalk.cyan.bold(' · Waiting for conversation to load...'));
     await this.page.waitForNavigation();
     if (this.crashed) {
       await utils.focusInput(this.page);

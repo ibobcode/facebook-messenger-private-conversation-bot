@@ -7,7 +7,7 @@ module.exports = class Builtin {
     data = {},
     allowedRoles = [],
   ) {
-    // console.log(chalk.green.inverse('🤖 CONV BOT CREATED'));
+    // console.info(chalk.green.inverse('🤖 CONV BOT CREATED'));
     this.dbManager = dbManager;
     this.megaManager = megaManager;
     this.page = page;

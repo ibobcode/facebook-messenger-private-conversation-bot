@@ -32,7 +32,7 @@ module.exports = class SubRedditFetcher extends Builtin {
         .filter((post) => !post.stickied);
       return data[0];
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return null;
     }
   }
@@ -40,11 +40,10 @@ module.exports = class SubRedditFetcher extends Builtin {
   async do() {
     if (this.data.msg) {
       const sub = this.subRedditParser(this.data.msg);
-      console.log(sub);
       if (sub) {
         const post = await this.fetchReddit(sub);
-        console.log(post);
         if (post) {
+          console.info(chalk.green.inverse('💬 Builtin Reddit'));
           this.wq.push({
             f: async () => {
               await utils.focusInput(this.page);

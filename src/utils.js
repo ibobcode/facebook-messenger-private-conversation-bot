@@ -25,9 +25,9 @@ async function websocketDataParser(data) {
       errorHandler.push(core);
       body = core === '' ? null : JSON.parse(core);
     } catch (error) {
-      console.log(chalk.red.inverse('🌶  Parsing error on websocket message'));
-      // console.log(errorHandler);
-      // console.log(error);
+      console.error(chalk.red.inverse('🌶  Parsing error on websocket message'));
+      // console.error(errorHandler);
+      // console.error(error);
     }
     //clearing out the body from the f**** UTF-8 characters escaped
     if (body && body.payload) {
@@ -38,12 +38,9 @@ async function websocketDataParser(data) {
     try {
       if (dataMessage.body && dataMessage.body.request_id === null) {
         // Trick to split the content of the payload just befor it's relevant IDs
-        //JSON.parse(a.split(',_=>LS.sp')[4].replace(/\(/g, '[').replace(/\)/g, ']').replaceAll('undefined', 'null'))
-        // console.log(dataMessage.body.payload.split(',_=>LS.sp'));
         const splitted = dataMessage.body.payload
           .split(',_=>LS.sp')
           .map((m) => {
-            // console.log(m.split('"')[1]);
             if (m.split('"')[1] == 'insertMessage') {
               // console.log(
               //   m
@@ -75,7 +72,7 @@ async function websocketDataParser(data) {
           };
       }
     } catch (error) {
-      console.log(chalk.red.inverse('🌶  Parsing error at level 2'));
+      console.error(chalk.red.inverse('🌶  Parsing error at level 2'));
     }
   }
   return { type: 'unknown' };
@@ -95,7 +92,7 @@ async function applyTag(page, tag) {
           .getAttribute('aria-expanded') === 'true',
     )
     .then(() => page.keyboard.press('Enter'))
-    .catch((err) => console.log('ERROR', err));
+    .catch((err) => console.error('ERROR', err));
 }
 
 async function applyTags(page, tags) {

@@ -8,7 +8,7 @@ module.exports = class Action {
     allowedRoles = [],
     floodControl = {},
   ) {
-    // console.log(chalk.green.inverse('🤖 CONV BOT CREATED'));
+    // console.info(chalk.green.inverse('🤖 CONV BOT CREATED'));
     this.dbManager = dbManager;
     this.megaManager = megaManager;
     this.page = page;

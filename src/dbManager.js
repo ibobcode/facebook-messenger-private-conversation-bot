@@ -6,7 +6,7 @@ const dd = new AWS.DynamoDB();
 
 module.exports = class DbManager {
   constructor() {
-    // console.log(chalk.green.inverse('🤖 CONV BOT CREATED'));
+    // console.info(chalk.green.inverse('🤖 CONV BOT CREATED'));
     this.users = [];
     this.messages = [];
     this.docClient = new AWS.DynamoDB.DocumentClient();
@@ -26,8 +26,8 @@ module.exports = class DbManager {
         })
         .promise();
     } catch (error) {
-      console.log(chalk.red.inverse('🌶  Unable to get users'));
-      console.log(error);
+      console.error(chalk.red.inverse('🌶  Unable to get users'));
+      console.error(error);
     }
     if (data) {
       this.users = data.Items;
@@ -54,8 +54,10 @@ module.exports = class DbManager {
         })
         .promise();
     } catch (error) {
-      console.log(chalk.red.inverse('🌶  Unable to get messages from last day'));
-      console.log(error);
+      console.error(
+        chalk.red.inverse('🌶  Unable to get messages from last day'),
+      );
+      console.error(error);
     }
     if (data) {
       this.messages = data.Items.map((i) => ({
@@ -114,8 +116,8 @@ module.exports = class DbManager {
         isBanned: false,
       });
     } catch (error) {
-      console.log(chalk.red.inverse('🌶  Unable to create new user'));
-      console.log(error);
+      console.error(chalk.red.inverse('🌶  Unable to create new user'));
+      console.error(error);
     }
   }
 
@@ -140,8 +142,8 @@ module.exports = class DbManager {
         return user;
       });
     } catch (error) {
-      console.log(chalk.red.inverse('🌶  Unable to update user'));
-      console.log(error);
+      console.error(chalk.red.inverse('🌶  Unable to update user'));
+      console.error(error);
     }
   }
 
@@ -183,8 +185,8 @@ module.exports = class DbManager {
         (m) => m.messageTimestamp > todayMidnight,
       );
     } catch (error) {
-      console.log(chalk.red.inverse('🌶  Unable to create new message'));
-      console.log(error);
+      console.error(chalk.red.inverse('🌶  Unable to create new message'));
+      console.error(error);
     }
   }
 };
