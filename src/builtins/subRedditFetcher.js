@@ -10,7 +10,7 @@ module.exports = class SubRedditFetcher extends Builtin {
   }
 
   subRedditParser(url) {
-    const rx = /^\/r\/([^\s\/]+)/;
+    const rx = /^r\/([^\s\/]+)/;
 
     let r = url.match(rx);
     return r ? r[1] : null;
