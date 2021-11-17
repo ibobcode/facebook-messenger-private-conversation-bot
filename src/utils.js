@@ -123,10 +123,11 @@ function megaRandomDL() {
       {
         email: process.env.MEGA_EMAIL,
         password: process.env.MEGA_PASSWORD,
-        keepalive: true,
-        autoload: true,
+        keepalive: false,
+        autoload: false,
       },
       async () => {
+        console.log('NAME', storage.name);
         const id = Math.floor(Math.random() * storage.root.children.length);
         storage.root.children[id].download((err, data) => {
           fs.writeFile('./tmp/file', data, async () => {
@@ -150,7 +151,7 @@ function megaNameDL(name) {
         email: process.env.MEGA_EMAIL,
         password: process.env.MEGA_PASSWORD,
         keepalive: false,
-        autoload: true,
+        autoload: false,
       },
       async () => {
         const found = storage.root.children.find((f) => f.name == name);
