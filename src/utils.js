@@ -149,7 +149,7 @@ function megaNameDL(name) {
       {
         email: process.env.MEGA_EMAIL,
         password: process.env.MEGA_PASSWORD,
-        keepalive: false,
+        keepalive: true,
         autoload: true,
       },
       async () => {
