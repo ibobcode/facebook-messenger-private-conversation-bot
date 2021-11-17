@@ -1,4 +1,3 @@
-const fetch = require('node-fetch');
 const request = require('request-promise');
 var mega = require('megajs');
 const fs = require('fs');
@@ -190,9 +189,11 @@ async function uploadPicture(page, upload, name, cookie) {
 }
 
 async function downloadPictureFromUrl(url, ext) {
-  const response = await fetch(url);
-  const buffer = await response.buffer();
-  await fs.writeFileSync(`./tmp/pictureFromUrl.${ext}`, buffer);
+  const fileData = await request({
+    uri: url,
+    encoding: null,
+  });
+  await fs.writeFileSync(`./tmp/pictureFromUrl.${ext}`, fileData);
 }
 
 async function uploadRandomPicture(page, upload) {
@@ -241,8 +242,10 @@ async function helloWorld(page) {
 
 async function cleanTmpFiles() {
   fs.readdir('./tmp', async (err, files) => {
-    for (const file of files) {
-      await fs.unlinkSync(`./tmp/${file}`);
+    if (files) {
+      for (const file of files) {
+        await fs.unlinkSync(`./tmp/${file}`);
+      }
     }
   });
 }
