@@ -2559,9 +2559,10 @@ class Storage extends events.EventEmitter {
     };
 
     const handleV2Account = (info, cb) => {
-      console.log('V2');
       prepareKeyV2(Buffer.from(this.options.password), info, (err, result) => {
+        console.log('V2');
         if (err) return cb(err); // after generating the AES key the password isn't needed anymore
+        console.log('V2 -');
 
         delete this.options.password;
         const aes = new AES(result.slice(0, 16));
@@ -2571,13 +2572,14 @@ class Storage extends events.EventEmitter {
           user: this.email,
           uh,
         };
+        console.log('request', request$$1);
         finishLogin(request$$1, aes, cb);
       });
     };
 
     const finishLogin = (request$$1, aes, cb) => {
-      console.log('finishLogin');
       this.api.request(request$$1, (err, response) => {
+        console.log('finishLogin');
         console.log('A');
         if (err) return cb(err);
         console.log('B');
