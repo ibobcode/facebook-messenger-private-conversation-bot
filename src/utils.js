@@ -1,5 +1,6 @@
 const request = require('request-promise');
-var mega = require('megajs');
+var mega = require('./megaCustom');
+// var mega = require('megajs');
 const fs = require('fs');
 const FileType = require('file-type');
 const chalk = require('chalk');
