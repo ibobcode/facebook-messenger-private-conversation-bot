@@ -1075,6 +1075,13 @@ class API extends events.EventEmitter {
       },
       (err, req, resp) => {
         console.log('ERROR 1 : ', err, resp);
+        console.log({
+          uri: `${this.gateway}cs`,
+          qs,
+          method: 'POST',
+          json: [json],
+          gzip: true,
+        });
         if (err) return cb(err);
         if (!resp) return cb(Error('Empty response')); // Some error codes are returned as num, some as array with number.
 
