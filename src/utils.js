@@ -124,6 +124,8 @@ async function megaOpen() {
         email: process.env.MEGA_EMAIL,
         password: process.env.MEGA_PASSWORD,
         autoload: false,
+        keepalive: false,
+        autologin: false,
       },
       () => resolve(s),
     );
@@ -134,20 +136,36 @@ function megaRandomDL() {
   return new Promise(async (res, rej) => {
     try {
       const storage = await megaOpen();
-      storage.reload(async () => {
+      console.log(storage);
+      storage.login((a, b) => {
+        console.log('1 - ########################');
+        console.log(a, b);
         console.log(storage);
-        const id = Math.floor(Math.random() * storage.root.children.length);
-        storage.root.children[id].download((err, data) => {
-          fs.writeFile('./tmp/file', data, async () => {
-            const t = await FileType.fromFile('./tmp/file');
-            fs.rename('./tmp/file', `./tmp/megaFile.${t.ext}`, async () => {
-              // const fileInput = await page.$(process.env.MESSENGER_CLASS_FILE);
-              // await fileInput.uploadFile(`./tmp/file.${t.ext}`);
-              return res(`megaFile.${t.ext}`);
-            });
+        storage.getAccountInfo((a, b) => {
+          console.log('2 - ########################');
+          console.log(a, b);
+          console.log(storage);
+          storage.reload((a, b) => {
+            console.log('3 - ########################');
+            console.log(a, b);
+            console.log(storage);
           });
         });
       });
+      // storage.reload(async () => {
+      //   console.log(storage);
+      //   const id = Math.floor(Math.random() * storage.root.children.length);
+      //   storage.root.children[id].download((err, data) => {
+      //     fs.writeFile('./tmp/file', data, async () => {
+      //       const t = await FileType.fromFile('./tmp/file');
+      //       fs.rename('./tmp/file', `./tmp/megaFile.${t.ext}`, async () => {
+      //         // const fileInput = await page.$(process.env.MESSENGER_CLASS_FILE);
+      //         // await fileInput.uploadFile(`./tmp/file.${t.ext}`);
+      //         return res(`megaFile.${t.ext}`);
+      //       });
+      //     });
+      //   });
+      // });
     } catch (error) {
       console.error('Mega Failed');
     }
