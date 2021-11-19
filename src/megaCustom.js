@@ -1074,6 +1074,7 @@ class API extends events.EventEmitter {
         gzip: true,
       },
       (err, req, resp) => {
+        console.log('ERROR 1 : ', err, resp);
         if (err) return cb(err);
         if (!resp) return cb(Error('Empty response')); // Some error codes are returned as num, some as array with number.
 
@@ -1095,6 +1096,7 @@ class API extends events.EventEmitter {
           }
         }
 
+        console.log('ERROR 2 : ', err, resp);
         cb(err, resp);
       },
     );
