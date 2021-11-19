@@ -142,16 +142,16 @@ function megaRandomDL() {
         console.log('1 - ########################');
         console.log(a, b);
         console.log(storage);
-        storage.getAccountInfo((a, b) => {
-          console.log('2 - ########################');
-          console.log(a, b);
-          console.log(storage);
-          storage.reload((a, b) => {
-            console.log('3 - ########################');
-            console.log(a, b);
-            console.log(storage);
-          });
-        });
+        // storage.getAccountInfo((a, b) => {
+        //   console.log('2 - ########################');
+        //   console.log(a, b);
+        //   console.log(storage);
+        //   storage.reload((a, b) => {
+        //     console.log('3 - ########################');
+        //     console.log(a, b);
+        //     console.log(storage);
+        //   });
+        // });
       });
       // storage.reload(async () => {
       //   console.log(storage);
