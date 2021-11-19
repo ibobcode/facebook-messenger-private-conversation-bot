@@ -2578,17 +2578,29 @@ class Storage extends events.EventEmitter {
     const finishLogin = (request$$1, aes, cb) => {
       console.log('finishLogin');
       this.api.request(request$$1, (err, response) => {
+        console.log('A');
         if (err) return cb(err);
+        console.log('B');
         this.key = formatKey(response.k);
+        console.log('C');
         aes.decryptECB(this.key);
+        console.log('D');
         this.aes = new AES(this.key);
+        console.log('E');
         const t = formatKey(response.csid);
+        console.log('F');
         const privk = this.aes.decryptECB(formatKey(response.privk));
+        console.log('G');
         const rsaPrivk = cryptoDecodePrivKey(privk);
+        console.log('H');
         if (!rsaPrivk) throw Error('invalid credentials');
+        console.log('I');
         let sid = e64(cryptoRsaDecrypt(t, rsaPrivk).slice(0, 43));
+        console.log('J');
         this.api.sid = this.sid = sid;
+        console.log('K');
         this.RSAPrivateKey = rsaPrivk;
+        console.log('L');
         loadUser(cb);
       });
     };
