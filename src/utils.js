@@ -117,15 +117,25 @@ async function applyAttachement(page, link) {
   }
 }
 
-function megaRandomDL() {
-  return new Promise((res, rej) => {
-    const storage = mega(
+async function megaOpen() {
+  return new Promise((resolve, reject) => {
+    const s = mega(
       {
         email: process.env.MEGA_EMAIL,
         password: process.env.MEGA_PASSWORD,
+        autoload: false,
       },
-      async () => {
-        // console.log(storage.root);
+      () => resolve(s),
+    );
+  });
+}
+
+function megaRandomDL() {
+  return new Promise(async (res, rej) => {
+    try {
+      const storage = await megaOpen();
+      storage.reload(async () => {
+        console.log(storage);
         const id = Math.floor(Math.random() * storage.root.children.length);
         storage.root.children[id].download((err, data) => {
           fs.writeFile('./tmp/file', data, async () => {
@@ -137,8 +147,10 @@ function megaRandomDL() {
             });
           });
         });
-      },
-    );
+      });
+    } catch (error) {
+      console.error('Mega Failed');
+    }
   });
 }
 

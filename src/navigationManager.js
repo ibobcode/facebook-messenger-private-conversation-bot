@@ -76,14 +76,16 @@ module.exports = class NavigationManager {
     );
     console.info(chalk.cyan.bold(' · Waiting for conversation to load...'));
     await this.page.waitForNavigation();
-    if (this.crashed) {
-      await utils.focusInput(this.page);
-      await utils.typeText(
-        this.page,
-        '🤖 I experienced a crash, sorry. cc @Dylan',
-      );
-      await this.page.keyboard.press('Enter');
-    }
+    console.info(chalk.cyan.bold(' · Loaded !'));
+
+    // if (this.crashed) {
+    //   await utils.focusInput(this.page);
+    //   await utils.typeText(
+    //     this.page,
+    //     '🤖 I experienced a crash, sorry. cc @Dylan',
+    //   );
+    //   await this.page.keyboard.press('Enter');
+    // }
   }
 
   async lastMessage() {
@@ -121,6 +123,7 @@ module.exports = class NavigationManager {
       'Network.webSocketFrameReceived',
       this.messageRecieved.bind(this),
     );
+    console.info(chalk.cyan.bold(' · Connected to websocket.'));
     // this.cdp.on('Network.webSocketFrameSent', this.messageSent);
   }
 
