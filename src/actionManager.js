@@ -56,6 +56,7 @@ module.exports = class ActionManager {
       act.sendMessage(
         "Tu n'es pas un utilisateur identifié ! Désolé mais il faut que tu demandes à un Admin de t'ajouter 😬",
       );
+      act.sendMessage(`${data.id}`);
       return null;
     }
 
