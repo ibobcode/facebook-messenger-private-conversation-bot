@@ -12,7 +12,7 @@ module.exports = class DailySnap extends Action {
   }
 
   async do() {
-    const megaFile = await utils.megaRandomDL();
-    await this.sendFile(megaFile);
+    const dropboxFile = await utils.dropboxDl();
+    await this.sendFile(dropboxFile);
   }
 };

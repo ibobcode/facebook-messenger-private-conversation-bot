@@ -11,12 +11,18 @@ module.exports = class DailySnap extends Action {
   }
 
   async do() {
+    let fileName = null;
     if (this.cmd.tokens[1] && this.cmd.tokens[1].string == 'real') {
-      await utils.megaNameDL('floppy.gif');
-      await this.sendFile('floppy.gif');
+      fileName = await utils.dropboxDl({
+        name: 'floppy.gif',
+        path_lower: '/floppy.gif',
+      });
     } else {
-      await utils.megaNameDL('floppy.jpeg');
-      await this.sendFile('floppy.jpeg');
+      fileName = await utils.dropboxDl({
+        name: 'floppy.jpeg',
+        path_lower: '/floppy.jpeg',
+      });
     }
+    await this.sendFile(fileName);
   }
 };

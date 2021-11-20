@@ -1,8 +1,6 @@
 const request = require('request-promise');
-var mega = require('./megaCustom');
-// var mega = require('megajs');
+const dropbox = require('dropbox');
 const fs = require('fs');
-const FileType = require('file-type');
 const chalk = require('chalk');
 
 // This fuction role is to :
@@ -118,82 +116,38 @@ async function applyAttachement(page, link) {
   }
 }
 
-async function megaOpen() {
-  return new Promise((resolve, reject) => {
-    const s = mega(
-      {
-        email: process.env.MEGA_EMAIL,
-        password: process.env.MEGA_PASSWORD,
-        autoload: false,
-        keepalive: false,
-        autologin: false,
-      },
-      () => resolve(s),
-    );
-  });
-}
-
-function megaRandomDL() {
-  return new Promise(async (res, rej) => {
+function dropboxDl(selectedFile = null) {
+  return new Promise(async (resolve, reject) => {
     try {
-      const storage = await megaOpen();
-      console.log(storage);
-      storage.login((a, b) => {
-        console.log('1 - ########################');
-        console.log(a, b);
-        console.log(storage);
-        // storage.getAccountInfo((a, b) => {
-        //   console.log('2 - ########################');
-        //   console.log(a, b);
-        //   console.log(storage);
-        //   storage.reload((a, b) => {
-        //     console.log('3 - ########################');
-        //     console.log(a, b);
-        //     console.log(storage);
-        //   });
-        // });
+      const dbx = new dropbox.Dropbox({
+        accessToken: process.env.DROPBOX_TOKEN,
       });
-      // storage.reload(async () => {
-      //   console.log(storage);
-      //   const id = Math.floor(Math.random() * storage.root.children.length);
-      //   storage.root.children[id].download((err, data) => {
-      //     fs.writeFile('./tmp/file', data, async () => {
-      //       const t = await FileType.fromFile('./tmp/file');
-      //       fs.rename('./tmp/file', `./tmp/megaFile.${t.ext}`, async () => {
-      //         // const fileInput = await page.$(process.env.MESSENGER_CLASS_FILE);
-      //         // await fileInput.uploadFile(`./tmp/file.${t.ext}`);
-      //         return res(`megaFile.${t.ext}`);
-      //       });
-      //     });
-      //   });
-      // });
-    } catch (error) {
-      console.error('Mega Failed');
-    }
-  });
-}
-
-function megaNameDL(name) {
-  return new Promise((res, rej) => {
-    const storage = mega(
-      {
-        email: process.env.MEGA_EMAIL,
-        password: process.env.MEGA_PASSWORD,
-      },
-      async () => {
-        const found = storage.root.children.find((f) => f.name == name);
-        if (found) {
-          found.download((err, data) => {
-            fs.writeFile('./tmp/file', data, async () => {
-              const t = await FileType.fromFile('./tmp/file');
-              fs.rename('./tmp/file', `./tmp/${name}`, () => {
-                return res();
-              });
-            });
+      let files = [selectedFile];
+      let id = 0;
+      if (!selectedFile) {
+        files = await dbx
+          .filesListFolder({ path: '' })
+          .then((response) => {
+            return response.result.entries;
+          })
+          .catch(function (error) {
+            console.error(error);
           });
-        }
-      },
-    );
+        id = Math.floor(Math.random() * files.length);
+      }
+      const rx = /^.*\.(jpg|png|jpeg|gif|mov|JPG|mp4|PNG|JPEG|GIF)$/i;
+      const ext = files[id].name.match(rx)[1];
+      const fileName = await dbx
+        .filesDownload({ path: files[id].path_lower })
+        .then(async (data) => {
+          const buf = Buffer.from(data.result.fileBinary, 'base64');
+          await fs.writeFileSync(`./tmp/dropBoxFile.${ext}`, buf);
+          return `dropBoxFile.${ext}`;
+        });
+      return resolve(fileName);
+    } catch (error) {
+      console.error('Dropbox Failed');
+    }
   });
 }
 
@@ -292,8 +246,7 @@ module.exports.applyTags = applyTags;
 module.exports.typeText = typeText;
 module.exports.applyAttachement = applyAttachement;
 module.exports.uploadRandomPicture = uploadRandomPicture;
-module.exports.megaRandomDL = megaRandomDL;
-module.exports.megaNameDL = megaNameDL;
+module.exports.dropboxDl = dropboxDl;
 module.exports.uploadPicture = uploadPicture;
 module.exports.fetchApi = fetchApi;
 module.exports.handleHelp = handleHelp;
