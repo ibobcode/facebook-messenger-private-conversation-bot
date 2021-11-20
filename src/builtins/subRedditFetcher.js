@@ -2,6 +2,7 @@
 const utils = require('../utils.js');
 const Builtin = require('./builtin');
 const request = require('request-promise');
+const chalk = require('chalk');
 
 module.exports = class SubRedditFetcher extends Builtin {
   constructor(navigationContext, data) {
