@@ -29,10 +29,11 @@ async function start(hasCrashed = false) {
   await nm.websocketConnection();
 }
 
-process.on('unhandledRejection', (reason, p) => {
+process.on('unhandledRejection', async (reason, p) => {
   crashed = true;
   console.error(chalk.red.inverse('💀 CONV BOT CRASHED'));
   console.error('Unhandled Rejection at: Promise', p, 'reason:', reason);
+  nm.close();
   nm = null;
   setTimeout(() => start(true), 5000);
 });

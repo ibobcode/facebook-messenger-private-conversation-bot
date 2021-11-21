@@ -37,6 +37,19 @@ module.exports = class NavigationManager {
     // this.cronTab.init();
   }
 
+  async close() {
+    let pages = await this.browser.pages();
+    for (const page of pages) {
+      await page.close();
+    }
+    await this.browser.close();
+    this.actionManager = null;
+    this.builtinManager = null;
+    this.dbManager.docClient = null;
+    this.dbManager = null;
+    this.wq = null;
+  }
+
   async waitingQueue() {
     // Here we make sure any instruction sent to the page gets treated in order and not overlaping
     while (true) {
@@ -59,10 +72,10 @@ module.exports = class NavigationManager {
     this.page = await this.browser.newPage();
     console.info(
       chalk.cyan.bold(' · Navigating to : '),
-      `https://www.messenger.com/t/${process.env.CONVERSATION_ID}`,
+      `https://www.messenger.com/t/${process.env.CONVERSATION_URL_ID}`,
     );
     await this.page.goto(
-      `https://www.messenger.com/t/${process.env.CONVERSATION_ID}`,
+      `https://www.messenger.com/t/${process.env.CONVERSATION_URL_ID}`,
     );
     console.info(chalk.cyan.bold(' · Loging in'));
     await this.page.evaluate((text) => {
@@ -106,9 +119,11 @@ module.exports = class NavigationManager {
 
   async messageRecieved(data) {
     const wsData = await utils.websocketDataParser(data);
-    await this.builtinManager.handleData(wsData);
-    if (wsData.type === 'msg') {
-      await this.actionManager.handleMessage(wsData);
+    if (wsData.conversationWsId == process.env.CONVERSATION_WS_ID) {
+      await this.builtinManager.handleData(wsData);
+      if (wsData.type === 'msg') {
+        await this.actionManager.handleMessage(wsData);
+      }
     }
     // TODO Maybe handle other things like videos or gif and pictures
   }

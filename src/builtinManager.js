@@ -11,7 +11,7 @@ module.exports = class BuiltinManager {
 
   async handleData(data) {
     data.sender = this.navigationContext.dbManager.users.filter(
-      (u) => u.messageId == data.id,
+      (u) => u.messageId == data.senderId,
     )[0];
     data.sender = data.sender ? data.sender : null;
     const keys = Object.keys(builtins);

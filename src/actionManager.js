@@ -12,7 +12,7 @@ module.exports = class ActionManager {
 
   tokenize(msg) {
     let countTags = -1;
-    if (msg.trim().charAt(0) === '!') {
+    if (msg && msg.trim().charAt(0) === '!') {
       return msg
         .replace('!', '')
         .replace(/\s+/g, ' ')
@@ -37,20 +37,22 @@ module.exports = class ActionManager {
       tokens: null,
       tags: data.tags,
       sender: null,
-      messageId: data.id,
+      messageId: data.senderId,
+      conversationWsId: data.conversationWsId,
     };
     instruction.tokens = this.tokenize(instruction.string);
     if (instruction.tokens === null) {
       return null;
     }
     instruction.sender = this.navigationContext.dbManager.users.filter(
-      (u) => u.messageId == data.id,
+      (u) => u.messageId == data.senderId,
     )[0];
     if (!instruction.sender) {
       act.sendMessage(
         "Tu n'es pas un utilisateur identifié ! Désolé mais il faut que tu demandes à un Admin de t'ajouter 😬",
       );
-      act.sendMessage(`${data.id}`);
+      act.sendMessage(`${data.senderId}`);
+      act.sendMessage(`${data.conversationWsId}`);
       return null;
     }
 
