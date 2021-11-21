@@ -43,12 +43,6 @@ module.exports = class ActionManager {
     if (instruction.tokens === null) {
       return null;
     }
-    if (!actions[instruction.tokens[0].string]) {
-      act.sendMessage(
-        "C'est pas une commande : tente un petit !help pour voir ce à quoi t'as droit 👀",
-      );
-      return null;
-    }
     instruction.sender = this.navigationContext.dbManager.users.filter(
       (u) => u.messageId == data.id,
     )[0];
@@ -57,6 +51,13 @@ module.exports = class ActionManager {
         "Tu n'es pas un utilisateur identifié ! Désolé mais il faut que tu demandes à un Admin de t'ajouter 😬",
       );
       act.sendMessage(`${data.id}`);
+      return null;
+    }
+
+    if (!actions[instruction.tokens[0].string]) {
+      act.sendMessage(
+        "C'est pas une commande : tente un petit !help pour voir ce à quoi t'as droit 👀",
+      );
       return null;
     }
 
