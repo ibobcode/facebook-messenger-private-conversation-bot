@@ -41,27 +41,23 @@ async function websocketDataParser(data) {
           .split(',_=>LS.sp')
           .map((m) => {
             if (m.split('"')[1] == 'insertMessage') {
-              // console.log(
-              //   m
-              //     .replace(/\(/g, '[')
-              //     .replace(/\)/g, ']')
-              //     .replace(/undefined/g, 'null')
-              //     .replace(/,U/g, ',null'),
-              // );
-              return JSON.parse(
+              const messageJson = JSON.parse(
                 m
                   .replace(/\(/g, '[')
                   .replace(/\)/g, ']')
                   .replace(/undefined/g, 'null')
-                  .replace(/,U/g, ',null'),
+                  .replace(/,U/g, ',null')
+                  .replace(/U,/g, 'null,'),
               );
+              return messageJson;
             } else return null;
           })
           .filter((n) => n)[0];
         if (splitted) {
           return {
             type: 'msg',
-            id: splitted[11][1],
+            senderId: splitted[11][1],
+            conversationWsId: splitted[4][1],
             tags: splitted[21] ? splitted[21].split(',') : [],
             msg: splitted[1],
           };

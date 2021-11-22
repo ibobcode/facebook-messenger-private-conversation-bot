@@ -6,21 +6,19 @@ module.exports = class AddUser extends Action {
   }
 
   async do() {
-    if (this.cmd.tokens.length != 5) {
+    if (this.cmd.tokens.length != 4) {
       this.sendMessage(
-        "Mauvais nombre d'arguments : !addUser <userId|tag> <messageId> <name> <surname>",
+        "Mauvais nombre d'arguments : !addUser <userId|tag> <name> <surname>",
       );
       return;
     }
     await this.dbManager.createUser(
-      // userId
+      // neoUserId
       this.cmd.tokens[1].string,
-      // messageId
-      this.cmd.tokens[2].string,
       // name
-      this.cmd.tokens[3].string,
+      this.cmd.tokens[2].string,
       // surname
-      this.cmd.tokens[4].string,
+      this.cmd.tokens[3].string,
     );
     this.sendMessage('✅ Nouvel utilisateur enregistré');
   }

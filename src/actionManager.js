@@ -12,7 +12,7 @@ module.exports = class ActionManager {
 
   tokenize(msg) {
     let countTags = -1;
-    if (msg.trim().charAt(0) === '!') {
+    if (msg && msg.trim().charAt(0) === '!') {
       return msg
         .replace('!', '')
         .replace(/\s+/g, ' ')
@@ -37,36 +37,42 @@ module.exports = class ActionManager {
       tokens: null,
       tags: data.tags,
       sender: null,
-      messageId: data.id,
+      conversationWsId: data.conversationWsId,
     };
     instruction.tokens = this.tokenize(instruction.string);
     if (instruction.tokens === null) {
       return null;
     }
+    instruction.sender = this.navigationContext.dbManager.users.filter(
+      (u) => u.neoUserId == data.senderId,
+    )[0];
+    if (!instruction.sender) {
+      act.sendMessage(
+        "Tu n'es pas un utilisateur identifié ! Désolé mais il faut que tu demandes à un Admin de t'ajouter 😬",
+      );
+      act.sendMessage(`${data.senderId}`);
+      return null;
+    }
+
+    const now = Date.now();
+
+    if (instruction.sender.timeout > now) {
+      return null;
+    }
+
     if (!actions[instruction.tokens[0].string]) {
       act.sendMessage(
         "C'est pas une commande : tente un petit !help pour voir ce à quoi t'as droit 👀",
       );
       return null;
     }
-    instruction.sender = this.navigationContext.dbManager.users.filter(
-      (u) => u.messageId == data.id,
-    )[0];
-    if (!instruction.sender) {
-      act.sendMessage(
-        "Tu n'es pas un utilisateur identifié ! Désolé mais il faut que tu demandes à un Admin de t'ajouter 😬",
-      );
-      act.sendMessage(`${data.id}`);
-      return null;
-    }
 
-    const cmdId = Date.now();
     this.navigationContext.dbManager.createMessage(
-      `${cmdId}`,
+      `${now}`,
       instruction.string,
-      instruction.sender.user,
-      `${instruction.messageId}`,
-      `${cmdId}`,
+      `${instruction.sender.neoUserId}`,
+      `${instruction.conversationWsId}`,
+      `${now}`,
     );
 
     console.info(chalk.green.inverse(`💬 Action ${instruction.string}`));
