@@ -65,49 +65,64 @@ module.exports = class NavigationManager {
 
   // Open a browser, login, navigate to the conversation
   async initConversationPage() {
-    console.info(chalk.cyan.bold(' · Opening browser'));
-    this.browser = await puppeteer.launch({
-      headless: process.env.HEADLESS === 'true',
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
-    this.page = await this.browser.newPage();
-    if (fs.existsSync('./cookies.json')) {
-      console.info(chalk.cyan.bold(' · Old session detected !'));
-      const cookiesString = await fs.readFileSync('./cookies.json');
-      const cookies = JSON.parse(cookiesString);
-      await this.page.setCookie(...cookies);
-    }
-    console.info(
-      chalk.cyan.bold(' · Navigating to : '),
-      `https://www.messenger.com/t/${process.env.CONVERSATION_URL_ID}`,
-    );
-    await this.page.goto(
-      `https://www.messenger.com/t/${process.env.CONVERSATION_URL_ID}`,
-    );
-    if (this.page.url().includes('login')) {
-      console.info(chalk.cyan.bold(' · Loging in'));
-      await this.page.evaluate((text) => {
-        document.getElementById('email').value = text;
-      }, process.env.EMAIL);
-      await this.page.evaluate((text) => {
-        document.getElementById('pass').value = text;
-      }, process.env.PASSWORD);
-      await this.page.evaluate(() =>
-        document.getElementById('loginbutton').click(),
+    try {
+      console.info(chalk.cyan.bold(' · Opening browser'));
+      this.browser = await puppeteer.launch({
+        headless: process.env.HEADLESS === 'true',
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      });
+      this.page = await this.browser.newPage();
+      if (fs.existsSync('./cookies.json')) {
+        console.info(chalk.cyan.bold(' · Old session detected !'));
+        const cookiesString = await fs.readFileSync('./cookies.json');
+        const cookies = JSON.parse(cookiesString);
+        await this.page.setCookie(...cookies);
+      }
+      console.info(
+        chalk.cyan.bold(' · Navigating to : '),
+        `https://www.messenger.com/t/${process.env.CONVERSATION_URL_ID}`,
       );
-      console.info(chalk.cyan.bold(' · Logged in'));
-      console.info(chalk.cyan.bold(' · Waiting for conversation to load...'));
-      await this.page.waitForNavigation();
-      const cookies = await this.page.cookies();
-      await fs.writeFileSync(
-        './cookies.json',
-        JSON.stringify(cookies, null, 2),
+      await this.page.goto(
+        `https://www.messenger.com/t/${process.env.CONVERSATION_URL_ID}`,
       );
-    } else {
-      console.info(chalk.cyan.bold(' · Already logged in'));
-      await this.page.waitForNavigation();
+      if (this.page.url().includes('login')) {
+        console.info(chalk.cyan.bold(' · Loging in'));
+        await this.page.evaluate((text) => {
+          document.getElementById('email').value = text;
+        }, process.env.EMAIL);
+        await this.page.evaluate((text) => {
+          document.getElementById('pass').value = text;
+        }, process.env.PASSWORD);
+        await this.page.evaluate(() =>
+          document.getElementById('loginbutton').click(),
+        );
+        console.info(chalk.cyan.bold(' · Logged in'));
+        console.info(chalk.cyan.bold(' · Waiting for conversation to load...'));
+        await this.page.waitForNavigation();
+        const cookies = await this.page.cookies();
+        await fs.writeFileSync(
+          './cookies.json',
+          JSON.stringify(cookies, null, 2),
+        );
+      } else {
+        console.info(chalk.cyan.bold(' · Already logged in'));
+        await this.page.waitForNavigation();
+      }
+      console.info(chalk.cyan.bold(' · Conversation loaded !'));
+    } catch (error) {
+      console.error(
+        chalk.red.inverse(
+          'The page could not be loaded, retrying in 5 seconds.',
+        ),
+      );
+      await utils.delay(5000);
+      let pages = await this.browser.pages();
+      for (const page of pages) {
+        await page.close();
+      }
+      await this.browser.close();
+      this.initConversationPage();
     }
-    console.info(chalk.cyan.bold(' · Conversation loaded !'));
   }
 
   async lastMessage() {
