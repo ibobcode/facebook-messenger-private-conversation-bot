@@ -128,7 +128,7 @@ module.exports = class DbManager {
         })
         .promise();
       this.users = this.users.map((user) => {
-        if (user.user) {
+        if (user.neoUserId) {
           return { ...user, [field]: value };
         }
         return user;
