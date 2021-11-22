@@ -46,6 +46,9 @@ module.exports = class ActionManager {
     instruction.sender = this.navigationContext.dbManager.users.filter(
       (u) => u.neoUserId == data.senderId,
     )[0];
+    if (process.env.BLACKLIST.includes(data.senderId)) {
+      return null;
+    }
     if (!instruction.sender) {
       // act.sendMessage(
       //   "Tu n'es pas un utilisateur identifié ! Désolé mais il faut que tu demandes à un Admin de t'ajouter 😬",
