@@ -32,6 +32,7 @@ module.exports = class Help extends Action {
                 '!free',
                 '!setRole',
                 '!addUser',
+                '!floppy',
               ].includes(file),
           )
           .join(', ')}.`,

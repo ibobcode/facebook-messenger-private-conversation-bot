@@ -13,10 +13,12 @@ module.exports = class Timeout extends Action {
     const senderId = this.cmd.tokens[1].isTag
       ? this.cmd.tags[this.cmd.tokens[1].tagIndex]
       : this.cmd.tokens[1].string;
-    const target = this.dbManager.users.filter((u) => u.user == senderId)[0];
+    const target = this.dbManager.users.filter(
+      (u) => u.neoUserId == senderId,
+    )[0];
     if (target) {
       await this.dbManager.updateUser(
-        // userId
+        // neoUserId
         senderId,
         // field to update : isBanned
         'isBanned',

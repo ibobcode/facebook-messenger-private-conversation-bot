@@ -22,7 +22,7 @@ module.exports = class DbManager {
     try {
       data = await this.docClient
         .scan({
-          TableName: 'neousers',
+          TableName: 'neoUsers',
         })
         .promise();
     } catch (error) {
@@ -61,58 +61,50 @@ module.exports = class DbManager {
     }
     if (data) {
       this.messages = data.Items.map((i) => ({
-        message: AWS.DynamoDB.Converter.output(i.message),
-        messageTimestamp: AWS.DynamoDB.Converter.output(i.messageTimestamp),
-        messageId: AWS.DynamoDB.Converter.output(i.messageId),
         cmdId: AWS.DynamoDB.Converter.output(i.cmdId),
-        userId: AWS.DynamoDB.Converter.output(i.userId),
+        message: AWS.DynamoDB.Converter.output(i.message),
+        neoUserId: AWS.DynamoDB.Converter.output(i.neoUserId),
+        conversationWsId: AWS.DynamoDB.Converter.output(i.conversationWsId),
+        messageTimestamp: AWS.DynamoDB.Converter.output(i.messageTimestamp),
       }));
       return this.messages;
     }
     return null;
   }
 
-  async createUser(userId, messageId, name, surname) {
+  async createUser(neoUserId, name, surname) {
     try {
       await dd
         .putItem({
           Item: {
-            user: {
-              S: userId,
-            },
-            messageId: {
-              S: messageId,
-            },
-            surname: {
-              S: surname,
+            neoUserId: {
+              S: neoUserId,
             },
             name: {
               S: name,
             },
-            isBanned: {
-              BOOL: false,
-            },
-            lastCmd: {
-              S: '',
+            surname: {
+              S: surname,
             },
             userRole: {
               S: 'user',
             },
             timeout: {
-              S: '',
+              N: '0',
+            },
+            isBanned: {
+              BOOL: false,
             },
           },
-          TableName: 'neousers',
+          TableName: 'neoUsers',
         })
         .promise();
       this.users.push({
-        timeout: '',
-        lastCmd: '',
-        userRole: 'user',
-        surname: surname,
-        messageId: messageId,
-        user: userId,
+        neoUserId: neoUserId,
         name: name,
+        surname: surname,
+        userRole: 'user',
+        timeout: '',
         isBanned: false,
       });
     } catch (error) {
@@ -121,13 +113,13 @@ module.exports = class DbManager {
     }
   }
 
-  async updateUser(userId, field, value) {
+  async updateUser(neoUserId, field, value) {
     try {
       await this.docClient
         .update({
-          TableName: 'neousers',
+          TableName: 'neoUsers',
           Key: {
-            user: userId,
+            neoUserId: neoUserId,
           },
           UpdateExpression: `set ${field} = :x`,
           ExpressionAttributeValues: {
@@ -147,7 +139,13 @@ module.exports = class DbManager {
     }
   }
 
-  async createMessage(cmdId, message, userId, messageId, timestamp) {
+  async createMessage(
+    cmdId,
+    message,
+    neoUserId,
+    conversationWsId,
+    messageTimestamp,
+  ) {
     try {
       await dd
         .putItem({
@@ -158,25 +156,25 @@ module.exports = class DbManager {
             message: {
               S: message,
             },
-            userId: {
-              S: userId,
+            neoUserId: {
+              S: neoUserId,
             },
-            messageId: {
-              S: messageId,
+            conversationWsId: {
+              S: conversationWsId,
             },
             messageTimestamp: {
-              N: timestamp,
+              N: messageTimestamp,
             },
           },
           TableName: 'neocommands',
         })
         .promise();
       this.messages.push({
-        message: message,
-        messageTimestamp: timestamp,
-        messageId: messageId,
         cmdId: cmdId,
-        userId: userId,
+        message: message,
+        neoUserId: neoUserId,
+        conversationWsId: conversationWsId,
+        messageTimestamp: messageTimestamp,
       });
       const date = new Date();
       date.setHours(0, 0, 0, 0);

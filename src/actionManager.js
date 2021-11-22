@@ -37,7 +37,6 @@ module.exports = class ActionManager {
       tokens: null,
       tags: data.tags,
       sender: null,
-      messageId: data.senderId,
       conversationWsId: data.conversationWsId,
     };
     instruction.tokens = this.tokenize(instruction.string);
@@ -45,14 +44,19 @@ module.exports = class ActionManager {
       return null;
     }
     instruction.sender = this.navigationContext.dbManager.users.filter(
-      (u) => u.messageId == data.senderId,
+      (u) => u.neoUserId == data.senderId,
     )[0];
     if (!instruction.sender) {
       act.sendMessage(
         "Tu n'es pas un utilisateur identifié ! Désolé mais il faut que tu demandes à un Admin de t'ajouter 😬",
       );
       act.sendMessage(`${data.senderId}`);
-      act.sendMessage(`${data.conversationWsId}`);
+      return null;
+    }
+
+    const now = Date.now();
+
+    if (instruction.sender.timeout > now) {
       return null;
     }
 
@@ -63,13 +67,12 @@ module.exports = class ActionManager {
       return null;
     }
 
-    const cmdId = Date.now();
     this.navigationContext.dbManager.createMessage(
-      `${cmdId}`,
+      `${now}`,
       instruction.string,
-      instruction.sender.user,
-      `${instruction.messageId}`,
-      `${cmdId}`,
+      `${instruction.sender.neoUserId}`,
+      `${instruction.conversationWsId}`,
+      `${now}`,
     );
 
     console.info(chalk.green.inverse(`💬 Action ${instruction.string}`));

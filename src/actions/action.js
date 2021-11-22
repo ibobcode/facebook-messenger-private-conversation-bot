@@ -39,7 +39,10 @@ module.exports = class Action {
       this.dbManager.messages.filter((m) => m.message == this.cmd.string)
         .length >= floodControl.groupDailyThreshold ||
       this.dbManager.messages.filter(
-        (m) => m.message == this.cmd.string && m.userId == this.cmd.sender.user,
+        (m) =>
+          m.conversationWsId == process.env.CONVERSATION_WS_ID &&
+          m.message == this.cmd.string &&
+          m.userId == this.cmd.sender.user,
       ).length >= floodControl.individualDailyThreshold
     )
       return {
@@ -49,11 +52,13 @@ module.exports = class Action {
     else if (
       this.dbManager.messages.filter(
         (m) =>
+          m.conversationWsId == process.env.CONVERSATION_WS_ID &&
           m.message == this.cmd.string &&
           m.messageTimestamp > Date.now() - floodControl.groupCooldown * 1000,
       ).length >= floodControl.groupSpamThreshold ||
       this.dbManager.messages.filter(
         (m) =>
+          m.conversationWsId == process.env.CONVERSATION_WS_ID &&
           m.message == this.cmd.string &&
           m.messageTimestamp >
             Date.now() - floodControl.individualCooldown * 1000,
