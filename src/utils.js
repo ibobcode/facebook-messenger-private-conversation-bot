@@ -73,6 +73,8 @@ async function websocketDataParser(data) {
   return { type: 'unknown' };
 }
 
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
 async function focusInput(page) {
   await page.evaluate(() => document.getElementsByClassName('_1mf')[0].click());
 }
@@ -238,6 +240,7 @@ function conditionalExecCheck(data, instruction) {
 
 module.exports.websocketDataParser = websocketDataParser;
 module.exports.focusInput = focusInput;
+module.exports.delay = delay;
 module.exports.applyTags = applyTags;
 module.exports.typeText = typeText;
 module.exports.applyAttachement = applyAttachement;
