@@ -25,7 +25,6 @@ async function start(hasCrashed = false) {
   utils.cleanTmpFiles();
   await nm.initDependencies();
   await nm.initConversationPage();
-  await nm.websocketConnection();
 }
 
 process.on('unhandledRejection', async (reason, p) => {

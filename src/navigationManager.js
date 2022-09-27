@@ -72,6 +72,7 @@ module.exports = class NavigationManager {
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
       });
       this.page = await this.browser.newPage();
+      await this.websocketConnection();
       if (fs.existsSync('./cookies.json')) {
         console.info(chalk.cyan.bold(' · Old session detected !'));
         const cookiesString = await fs.readFileSync('./cookies.json');
@@ -106,7 +107,7 @@ module.exports = class NavigationManager {
         );
       } else {
         console.info(chalk.cyan.bold(' · Already logged in'));
-        await this.page.waitForNavigation();
+        // await this.page.waitForNavigation();
       }
       console.info(chalk.cyan.bold(' · Conversation loaded !'));
     } catch (error) {
